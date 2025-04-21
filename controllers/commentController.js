@@ -7,9 +7,24 @@ const commentModel = require("../models/commentModel");
 //@ private access
 const getComments=asyncHandler(async(req,res)=>{
     const userId= req.user.id;
-    const comments=await commentModel.find({userId});
+
+    //1. get page and limit from query params
+    const page= parseInt(req.query.page) ||1;
+    const limit =parseInt(req.query.limit) || 10;
+
+    //2. calculate how many documents to skip
+    const skip = (page-1)*limit;
+
+    //3. count total user comments(for pagination information)
+    const total= await commentModel.countDocuments({userId});
+
+    //4. fetch paginated comments
+    const comments=await commentModel.find({userId}).skip(skip).limit(limit).sort({createdAt: -1});
+
+
     if(comments.length !==0){
-        res.status(200).json({comments});
+       // res.status(200).json({comments});
+       res.status(200).json({page, limit, totalPages:Math.ceil(total/limit), totalComments:total,comments})
     }else {
         res.status(404);
         throw new Error("Comments are not available");

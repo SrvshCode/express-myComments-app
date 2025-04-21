@@ -3,9 +3,14 @@ const { getComments, getComment, createComment, editComment, deleteComment } = r
 const authenticateUser = require("../middlewares/authenticationHandler");
 const router= express.Router();
 
-router.route("/").get(authenticateUser,getComments).post(authenticateUser,createComment);
+router.route("/")
+    .get(authenticateUser,getComments)
+    .post(authenticateUser,createComment);
 
-router.route("/:id").get(authenticateUser,getComment).put(authenticateUser,editComment).delete(authenticateUser,deleteComment);
+router.route("/:id")
+    .get(authenticateUser,getComment)
+    .put(authenticateUser,editComment)
+    .delete(authenticateUser,deleteComment);
 
 
 module.exports = router;
